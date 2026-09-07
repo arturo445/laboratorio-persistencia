@@ -1,4 +1,7 @@
 package com.deepblue.rescue.repository;
 
-public interface SpecialistRepository {
+import com.deepblue.rescue.domain.Specialist;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface SpecialistRepository extends JpaRepository<Specialist, Long> {
 }
