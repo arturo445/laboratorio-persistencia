@@ -157,34 +157,13 @@ class PersistenceIntegrationTest {
     @Test
     @DisplayName("Animal 1:1 MedicalRecord — cascade genera ambos IDs")
     void shouldPersistMedicalRecordByCascade() {
-        RescueCenter center = new RescueCenter();
-        center.setCode("DB-CAR");
-        center.setName("DeepBlue Caribbean");
-        center.setCity("Santa Marta");
-        rescueCenterRepository.save(center);
+        RescueCenter center = rescueCenterRepository.save(new RescueCenter("DB-CAR", "DeepBlue Caribbean", "Santa Marta"));
 
-        RescueCase rescueCase = new RescueCase();
-        rescueCase.setCaseCode("RES-2026-001");
-        rescueCase.setRescueDate(LocalDate.of(2026, 8, 1));
-        rescueCase.setRescueLocation("Bahía Concha");
-        rescueCase.setStatus(RescueStatus.IN_REHABILITATION);
-        rescueCase.setRescueCenter(center);
-        rescueCaseRepository.save(rescueCase);
+        RescueCase rescueCase = rescueCaseRepository.save(new RescueCase("RES-2026-001", LocalDate.of(2026, 8, 1), "Bahía Concha", center, RescueStatus.IN_REHABILITATION));
 
-        Animal animal = new Animal();
-        animal.setAnimalCode("AN-2026-002");
-        animal.setCommonName("Leatherback Turtle");
-        animal.setScientificName("Dermochelys coriacea");
-        animal.setSex(AnimalSex.MALE);
-        animal.setRescueCase(rescueCase);
-        animalRepository.save(animal);
+        Animal animal = animalRepository.save(new Animal("AN-2026-002", "Leatherback Turtle", "Dermochelys coriacea", AnimalSex.MALE, rescueCase));
 
-        MedicalRecord record = new MedicalRecord();
-        record.setAnimal(animal);
-        record.setInitialWeight(new BigDecimal("28.40"));
-        record.setInitialCondition("STABLE");
-        record.setInjuries("Left front flipper injury");
-        record.setObservations("Needs monitoring");
+        MedicalRecord record = new MedicalRecord(new BigDecimal("28.40"), "STABLE", "Left front flipper injury", "Needs monitoring");
         animal.assignMedicalRecord(record);
         animalRepository.flush();
 
@@ -201,11 +180,7 @@ class PersistenceIntegrationTest {
         Expertise trauma = findOrCreateExpertise("Trauma");
         Expertise rehabilitation = findOrCreateExpertise("Rehabilitation");
 
-        Specialist elena = new Specialist();
-        elena.setProfessionalCode("SPEC-001");
-        elena.setFirstName("Elena");
-        elena.setLastName("Vargas");
-        elena.setEmail("elena@deepblue.org");
+        Specialist elena = new Specialist("SPEC-001", "Elena", "Vargas", "elena@deepblue.org");
         elena.addExpertise(trauma);
         elena.addExpertise(rehabilitation);
         specialistRepository.save(elena);
@@ -220,11 +195,7 @@ class PersistenceIntegrationTest {
     @Test
     @DisplayName("Query Method: findByStatus — 2 casos IN_REHABILITATION")
     void shouldFindCasesByStatus() {
-        RescueCenter center = new RescueCenter();
-        center.setCode("DB-CAR");
-        center.setName("DeepBlue Caribbean");
-        center.setCity("Santa Marta");
-        rescueCenterRepository.save(center);
+        RescueCenter center = createCenter("DB-CAR", "Caribbean");
 
         createCase(center, "RES-001", RescueStatus.IN_REHABILITATION);
         createCase(center, "RES-002", RescueStatus.READY_FOR_RELEASE);
@@ -243,17 +214,8 @@ class PersistenceIntegrationTest {
     @Test
     @DisplayName("Query Method navegación: animales del centro DB-CAR")
     void shouldFindAnimalsByCenterCode() {
-        RescueCenter car = new RescueCenter();
-        car.setCode("DB-CAR");
-        car.setName("DeepBlue Caribbean");
-        car.setCity("Santa Marta");
-        rescueCenterRepository.save(car);
-
-        RescueCenter pac = new RescueCenter();
-        pac.setCode("DB-PAC");
-        pac.setName("DeepBlue Pacific");
-        pac.setCity("Buenaventura");
-        rescueCenterRepository.save(pac);
+        RescueCenter car = createCenter("DB-CAR", "Caribbean");
+        RescueCenter pac = createCenter("DB-PAC", "Pacific");
 
         createAnimalWithCase(car, "AN-CAR-001", "Green Sea Turtle", "RES-CAR-001");
         createAnimalWithCase(car, "AN-CAR-002", "Hawksbill Turtle", "RES-CAR-002");
@@ -346,12 +308,7 @@ class PersistenceIntegrationTest {
         RescueCenter center = createCenter("DB-CAR", "Caribbean");
         createAnimalWithCase(center, "AN-100", "Turtle", "RES-001");
 
-        Animal duplicate = new Animal();
-        duplicate.setAnimalCode("AN-100");
-        duplicate.setCommonName("Another Turtle");
-        duplicate.setScientificName("Caretta caretta");
-        duplicate.setSex(AnimalSex.MALE);
-        duplicate.setRescueCase(createCase(center, "RES-002", RescueStatus.ADMITTED));
+        Animal duplicate = new Animal("AN-100", "Another Turtle", "Caretta caretta", AnimalSex.MALE, createCase(center, "RES-002", RescueStatus.ADMITTED));
 
         assertThatThrownBy(() -> {
             animalRepository.saveAndFlush(duplicate);
@@ -366,12 +323,7 @@ class PersistenceIntegrationTest {
     void shouldThrowOnInvalidForeignKey() {
         Specialist specialist = createSpecialistAndSave("SPEC-E", "Elena", "Vargas", "elena@deepblue.org");
 
-        Treatment treatment = new Treatment();
-        treatment.setAnimal(null);
-        treatment.setSpecialist(specialist);
-        treatment.setPerformedAt(LocalDateTime.now());
-        treatment.setType(TreatmentType.OBSERVATION);
-        treatment.setDescription("Test");
+        Treatment treatment = new Treatment(null, specialist, LocalDateTime.now(), TreatmentType.OBSERVATION, "Test");
 
         assertThatThrownBy(() -> {
             treatmentRepository.saveAndFlush(treatment);
@@ -386,12 +338,7 @@ class PersistenceIntegrationTest {
     void shouldThrowOnInvalidStatusCheck() {
         RescueCenter center = createCenter("DB-CAR", "Caribbean");
 
-        RescueCase rescueCase = new RescueCase();
-        rescueCase.setCaseCode("RES-CHECK");
-        rescueCase.setRescueDate(LocalDate.of(2026, 8, 1));
-        rescueCase.setRescueLocation("Test");
-        rescueCase.setStatus(RescueStatus.ADMITTED);
-        rescueCase.setRescueCenter(center);
+        RescueCase rescueCase = createCase(center, "RES-CHECK", RescueStatus.ADMITTED);
         rescueCaseRepository.save(rescueCase);
 
         assertThatThrownBy(() -> {
@@ -431,37 +378,17 @@ class PersistenceIntegrationTest {
     @DisplayName("Reto integrador: persistir escenario DeepBlue Caribbean completo")
     void shouldPersistCompleteScenario() {
         // Centro
-        RescueCenter center = new RescueCenter();
-        center.setCode("DB-CAR");
-        center.setName("DeepBlue Caribbean");
-        center.setCity("Santa Marta");
-        rescueCenterRepository.save(center);
+        RescueCenter center = createCenter("DB-CAR", "Caribbean");
 
         // Caso
-        RescueCase rescueCase = new RescueCase();
-        rescueCase.setCaseCode("RES-2026-100");
-        rescueCase.setRescueDate(LocalDate.of(2026, 8, 18));
-        rescueCase.setRescueLocation("Bahía Concha");
-        rescueCase.setStatus(RescueStatus.IN_REHABILITATION);
-        rescueCase.setRescueCenter(center);
+        RescueCase rescueCase = new RescueCase("RES-2026-100", LocalDate.of(2026, 8, 18), "Bahía Concha", center, RescueStatus.IN_REHABILITATION);
         rescueCaseRepository.save(rescueCase);
 
         // Animal
-        Animal animal = new Animal();
-        animal.setAnimalCode("AN-2026-100");
-        animal.setCommonName("Green Sea Turtle");
-        animal.setScientificName("Chelonia mydas");
-        animal.setSex(AnimalSex.FEMALE);
-        animal.setRescueCase(rescueCase);
-        animalRepository.save(animal);
+        Animal animal = animalRepository.save(new Animal("AN-2026-100", "Green Sea Turtle", "Chelonia mydas", AnimalSex.FEMALE, rescueCase));
 
         // Medical Record
-        MedicalRecord record = new MedicalRecord();
-        record.setAnimal(animal);
-        record.setInitialWeight(new BigDecimal("27.80"));
-        record.setInitialCondition("STABLE");
-        record.setInjuries("Injury caused by fishing net");
-        record.setObservations("Possible plastic ingestion");
+        MedicalRecord record = new MedicalRecord(new BigDecimal("27.80"), "STABLE", "Injury caused by fishing net", "Possible plastic ingestion");
         animal.assignMedicalRecord(record);
         animalRepository.flush();
 
@@ -470,11 +397,7 @@ class PersistenceIntegrationTest {
         Expertise trauma = findOrCreateExpertise("Trauma");
         Expertise rehabilitation = findOrCreateExpertise("Rehabilitation");
 
-        Specialist elena = new Specialist();
-        elena.setProfessionalCode("SPEC-001");
-        elena.setFirstName("Elena");
-        elena.setLastName("Vargas");
-        elena.setEmail("elena@deepblue.org");
+        Specialist elena = new Specialist("SPEC-001", "Elena", "Vargas", "elena@deepblue.org");
         elena.addExpertise(marineReptiles);
         elena.addExpertise(trauma);
         elena.addExpertise(rehabilitation);
@@ -628,10 +551,9 @@ class PersistenceIntegrationTest {
         Animal animal1 = createAnimalWithCase(center, "AN-REHAB", "Green Turtle", "RES-REHAB");
 
         // Caso cerrado (no debería aparecer)
-        Animal animal2 = createAnimalWithCase(center, "AN-CLOSED", "Loggerhead Turtle", "RES-CLOSED");
-        RescueCase closedCase = animal2.getRescueCase();
-        closedCase.setStatus(RescueStatus.CLOSED);
+        RescueCase closedCase = new RescueCase("RES-CLOSED", LocalDate.of(2026, 8, 1), "Closed Location", center, RescueStatus.CLOSED);
         rescueCaseRepository.save(closedCase);
+        Animal animal2 = animalRepository.save(new Animal("AN-CLOSED", "Loggerhead Turtle", "Scientific name", AnimalSex.MALE, closedCase));
 
         // Especialista con Trauma
         Specialist elena = createSpecialist("SPEC-E", "Elena", "Vargas", "elena@deepblue.org");
@@ -663,77 +585,44 @@ class PersistenceIntegrationTest {
     // =========================================================================
 
     private RescueCenter createCenter(String code, String name) {
-        RescueCenter center = new RescueCenter();
-        center.setCode(code);
-        center.setName("DeepBlue " + name);
-        center.setCity(name);
+        RescueCenter center = new RescueCenter(code, "DeepBlue " + name, name);
         return rescueCenterRepository.save(center);
     }
 
     private RescueCase createCase(RescueCenter center, String code, RescueStatus status) {
-        RescueCase rescueCase = new RescueCase();
-        rescueCase.setCaseCode(code);
-        rescueCase.setRescueDate(LocalDate.of(2026, 8, 1));
-        rescueCase.setRescueLocation("Location");
-        rescueCase.setStatus(status);
-        rescueCase.setRescueCenter(center);
+        RescueCase rescueCase = new RescueCase(code, LocalDate.of(2026, 8, 1), "Location", center, status);
         return rescueCaseRepository.save(rescueCase);
     }
 
     private Animal createAnimalWithCase(RescueCenter center, String animalCode, String commonName, String caseCode) {
         RescueCase rescueCase = createCase(center, caseCode, RescueStatus.IN_REHABILITATION);
-        Animal animal = new Animal();
-        animal.setAnimalCode(animalCode);
-        animal.setCommonName(commonName);
-        animal.setScientificName("Scientific name");
-        animal.setSex(AnimalSex.MALE);
-        animal.setRescueCase(rescueCase);
+        Animal animal = new Animal(animalCode, commonName, "Scientific name", AnimalSex.MALE, rescueCase);
         return animalRepository.save(animal);
     }
 
     private Specialist createSpecialistAndSave(String code, String firstName, String lastName, String email) {
-        Specialist specialist = new Specialist();
-        specialist.setProfessionalCode(code);
-        specialist.setFirstName(firstName);
-        specialist.setLastName(lastName);
-        specialist.setEmail(email);
+        Specialist specialist = new Specialist(code, firstName, lastName, email);
         return specialistRepository.save(specialist);
     }
 
     private Specialist createSpecialist(String code, String firstName, String lastName, String email) {
-        Specialist specialist = new Specialist();
-        specialist.setProfessionalCode(code);
-        specialist.setFirstName(firstName);
-        specialist.setLastName(lastName);
-        specialist.setEmail(email);
-        return specialist;
+        return new Specialist(code, firstName, lastName, email);
     }
 
     private void createTreatment(Animal animal, Specialist specialist, LocalDateTime date, TreatmentType type) {
-        Treatment treatment = new Treatment();
-        treatment.setAnimal(animal);
-        treatment.setSpecialist(specialist);
-        treatment.setPerformedAt(date);
-        treatment.setType(type);
-        treatment.setDescription("Treatment description");
+        Treatment treatment = new Treatment(animal, specialist, date, type, "Treatment description");
         treatmentRepository.save(treatment);
     }
 
     private void createTreatment(Animal animal, Specialist specialist, LocalDateTime date, TreatmentType type, String description) {
-        Treatment treatment = new Treatment();
-        treatment.setAnimal(animal);
-        treatment.setSpecialist(specialist);
-        treatment.setPerformedAt(date);
-        treatment.setType(type);
-        treatment.setDescription(description);
+        Treatment treatment = new Treatment(animal, specialist, date, type, description);
         treatmentRepository.save(treatment);
     }
 
     private Expertise findOrCreateExpertise(String name) {
         return expertiseRepository.findByNameIgnoreCase(name)
                 .orElseGet(() -> {
-                    Expertise expertise = new Expertise();
-                    expertise.setName(name);
+                    Expertise expertise = new Expertise(name);
                     return expertiseRepository.save(expertise);
                 });
     }
