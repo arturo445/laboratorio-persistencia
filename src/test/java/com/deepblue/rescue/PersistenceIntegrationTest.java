@@ -60,7 +60,7 @@ class PersistenceIntegrationTest {
     private EntityManager entityManager;
 
     // =========================================================================
-    // Paso 47 — Test de Flyway
+    // Test de Flyway
     // =========================================================================
     @Test
     @DisplayName("Flyway debe ejecutar al menos V1 y V2")
@@ -74,16 +74,13 @@ class PersistenceIntegrationTest {
     }
 
     // =========================================================================
-    // Paso 48 — Test de métodos heredados
+    // Test de métodos heredados
     // =========================================================================
     @Test
     @DisplayName("Métodos heredados: save, findById, existsById, count")
     void shouldUseInheritedMethods() {
-        RescueCenter center = new RescueCenter();
-        center.setCode("DB-CAR");
-        center.setName("DeepBlue Caribbean Center");
-        center.setCity("Santa Marta");
-
+        RescueCenter center = rescueCenterRepository.saveAndFlush(new RescueCenter
+                ("DB-CAR", "DeepBlue Caribbean Center", "Santa Marta"));
         rescueCenterRepository.save(center);
 
         Optional<RescueCenter> found = rescueCenterRepository.findById(center.getId());
@@ -95,32 +92,22 @@ class PersistenceIntegrationTest {
     }
 
     // =========================================================================
-    // Paso 49 — Test relación 1:N
+    // Test relación 1:N
     // =========================================================================
     @Test
-    @DisplayName("RescueCenter 1:N RescueCase — dos casos pertenecen al mismo centro")
-    void shouldPersistOneToMany() {
-        RescueCenter center = new RescueCenter();
-        center.setCode("DB-CAR");
-        center.setName("DeepBlue Caribbean");
-        center.setCity("Santa Marta");
+    @DisplayName("RescueCenter 1:N RescueCase - dos casos pertenecen al mismo centro")
+    void shouldPersistOneToMany(){
+        RescueCenter center = rescueCenterRepository.saveAndFlush(new RescueCenter
+                ("DB-CAR", "DeepBlue Caribbean", "Santa Marta"));
         rescueCenterRepository.save(center);
 
-        RescueCase case1 = new RescueCase();
-        case1.setCaseCode("RES-2026-001");
-        case1.setRescueDate(LocalDate.of(2026, 8, 1));
-        case1.setRescueLocation("Bahía Concha");
-        case1.setStatus(RescueStatus.IN_REHABILITATION);
-        case1.setRescueCenter(center);
+        RescueCase case1 = rescueCaseRepository.saveAndFlush(new RescueCase
+                ("RES-2026-001", LocalDate.of(2026, 8, 1),"Bahía Concha", center, RescueStatus.IN_REHABILITATION));
         rescueCaseRepository.save(case1);
 
-        RescueCase case2 = new RescueCase();
-        case2.setCaseCode("RES-2026-002");
-        case2.setRescueDate(LocalDate.of(2026, 8, 5));
-        case2.setRescueLocation("Rodadero");
-        case2.setStatus(RescueStatus.ADMITTED);
-        case2.setRescueCenter(center);
-        rescueCaseRepository.save(case2);
+        RescueCase case2 = rescueCaseRepository.saveAndFlush(new RescueCase
+                ("RES-2026-002", LocalDate.of(2026, 8, 5),"Rodadero", center, RescueStatus.ADMITTED));
+        rescueCaseRepository.save(case1);
 
         RescueCase foundCase1 = rescueCaseRepository.findById(case1.getId()).orElseThrow();
         RescueCase foundCase2 = rescueCaseRepository.findById(case2.getId()).orElseThrow();
@@ -130,42 +117,37 @@ class PersistenceIntegrationTest {
     }
 
     // =========================================================================
-    // Paso 50 — Test RescueCase 1:1 Animal
+    // Test RescueCase 1:1 Animal
     // =========================================================================
+
     @Test
-    @DisplayName("RescueCase 1:1 Animal — case.getAnimal y animal.getRescueCase")
-    void shouldPersistOneToOneAnimal() {
-        RescueCenter center = new RescueCenter();
-        center.setCode("DB-CAR");
-        center.setName("DeepBlue Caribbean");
-        center.setCity("Santa Marta");
+    @DisplayName("RescueCase 1:1 Animal - case.getAnimal y animal.getRescueCase")
+    void shouldPersistOneToOneAnimal(){
+        RescueCenter center = rescueCenterRepository.saveAndFlush(new RescueCenter
+                ("DB-CAR", "DeepBlue Caribbean", "Santa Marta"));
         rescueCenterRepository.save(center);
 
-        RescueCase rescueCase = new RescueCase();
-        rescueCase.setCaseCode("RES-2026-001");
-        rescueCase.setRescueDate(LocalDate.of(2026, 8, 1));
-        rescueCase.setRescueLocation("Bahía Concha");
-        rescueCase.setStatus(RescueStatus.IN_REHABILITATION);
-        rescueCase.setRescueCenter(center);
+        RescueCase rescueCase = rescueCaseRepository.saveAndFlush(new RescueCase
+                ("RES-2026-001", LocalDate.of(2026, 8, 1),"Bahía Concha", center, RescueStatus.IN_REHABILITATION));
         rescueCaseRepository.save(rescueCase);
 
-        Animal animal = new Animal();
-        animal.setAnimalCode("AN-2026-001");
-        animal.setCommonName("Green Sea Turtle");
-        animal.setScientificName("Chelonia mydas");
-        animal.setSex(AnimalSex.FEMALE);
-        animal.setRescueCase(rescueCase);
+        Animal animal = animalRepository.saveAndFlush(new Animal(
+                "AN-2026-001",
+                "Green Sea Turtle",
+                "Chelonia mydas",
+                AnimalSex.FEMALE,
+                rescueCase
+        ));
         animalRepository.save(animal);
         animalRepository.flush();
 
-        // Refresh from database
+        // Refrescar desde la base de datos
         entityManager.refresh(rescueCase);
 
         RescueCase found = rescueCaseRepository.findById(rescueCase.getId()).orElseThrow();
         Animal foundAnimal = animalRepository.findById(animal.getId()).orElseThrow();
 
         assertThat(found.getAnimal()).isNotNull();
-        assertThat(foundAnimal.getRescueCase()).isNotNull();
         assertThat(foundAnimal.getRescueCase().getCaseCode()).isEqualTo("RES-2026-001");
     }
 
