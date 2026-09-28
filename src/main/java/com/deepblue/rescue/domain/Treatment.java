@@ -1,6 +1,7 @@
 package com.deepblue.rescue.domain;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,51 +30,24 @@ public class Treatment {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    public Long getId() {
-        return id;
+    protected Treatment() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Animal getAnimal() {
-        return animal;
-    }
-
-    public void setAnimal(Animal animal) {
+    public Treatment(Animal animal, Specialist specialist, LocalDateTime performedAt, TreatmentType type, String description) {
         this.animal = animal;
-    }
-
-    public Specialist getSpecialist() {
-        return specialist;
-    }
-
-    public void setSpecialist(Specialist specialist) {
         this.specialist = specialist;
-    }
-
-    public LocalDateTime getPerformedAt() {
-        return performedAt;
-    }
-
-    public void setPerformedAt(LocalDateTime performedAt) {
         this.performedAt = performedAt;
-    }
-
-    public TreatmentType getType() {
-        return type;
-    }
-
-    public void setType(TreatmentType type) {
         this.type = type;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
     }
+
+    public Long getId() { return id; }
+    public Animal getAnimal() { return animal; }
+    public Specialist getSpecialist() { return specialist; }
+    public LocalDateTime getPerformedAt() { return performedAt; }
+    public TreatmentType getType() { return type; }
+    public String getDescription() { return description; }
+
+    public void setAnimal(Animal animal) { this.animal = animal; }
+    public void setSpecialist(Specialist specialist) { this.specialist = specialist; }
 }

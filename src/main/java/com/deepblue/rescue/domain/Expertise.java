@@ -1,11 +1,12 @@
 package com.deepblue.rescue.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "expertise")
+@Table(name = "expertises")
 public class Expertise {
 
     @Id
@@ -16,29 +17,16 @@ public class Expertise {
     private String name;
 
     @ManyToMany(mappedBy = "expertiseAreas")
-    private List<Specialist> specialists = new ArrayList<>();
+    private Set<Specialist> specialists = new HashSet<>();
 
-    public Long getId() {
-        return id;
+    protected Expertise(){
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public Expertise(String name){
         this.name = name;
     }
 
-    public List<Specialist> getSpecialists() {
-        return specialists;
-    }
-
-    public void setSpecialists(List<Specialist> specialists) {
-        this.specialists = specialists;
-    }
+    public Long getId(){ return id; }
+    public String getName() { return name; }
+    public Set<Specialist> getSpecialists() { return specialists; }
 }

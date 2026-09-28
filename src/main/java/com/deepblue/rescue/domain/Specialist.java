@@ -1,8 +1,11 @@
 package com.deepblue.rescue.domain;
 
 import jakarta.persistence.*;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "specialists")
@@ -29,81 +32,43 @@ public class Specialist {
 
     @ManyToMany
     @JoinTable(
-        name = "specialist_expertise",
-        joinColumns = @JoinColumn(name = "specialist_id"),
-        inverseJoinColumns = @JoinColumn(name = "expertise_id")
+            name = "specialist_expertise",
+            joinColumns = @JoinColumn(name = "specialist_id"),
+            inverseJoinColumns = @JoinColumn(name = "expertise_id")
     )
-    private List<Expertise> expertiseAreas = new ArrayList<>();
+    private Set<Expertise> expertiseAreas = new HashSet<>();
 
     @OneToMany(mappedBy = "specialist")
     private List<Treatment> treatments = new ArrayList<>();
 
-    public Long getId() {
-        return id;
+    protected Specialist(){
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getProfessionalCode() {
-        return professionalCode;
-    }
-
-    public void setProfessionalCode(String professionalCode) {
+    public Specialist(String professionalCode, String firstName, String lastName, String email) {
         this.professionalCode = professionalCode;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
         this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
         this.email = email;
     }
 
-    public boolean isActive() {
-        return active;
-    }
+    public Long getId() { return id; }
+    public String getProfessionalCode() { return professionalCode; }
+    public String getFirstName() { return firstName; }
+    public String getLastName() { return lastName; }
+    public String getEmail() { return email; }
+    public boolean isActive() { return active; }
+    public List<Treatment> getTreatments() { return List.copyOf(treatments); }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public List<Expertise> getExpertiseAreas() {
-        return expertiseAreas;
-    }
-
-    public void setExpertiseAreas(List<Expertise> expertiseAreas) {
-        this.expertiseAreas = expertiseAreas;
-    }
-
-    public List<Treatment> getTreatments() {
-        return treatments;
-    }
-
-    public void setTreatments(List<Treatment> treatments) {
-        this.treatments = treatments;
-    }
-
-    public void addExpertise(Expertise expertise) {
+    public void addExpertise(Expertise expertise){
         this.expertiseAreas.add(expertise);
         expertise.getSpecialists().add(this);
     }
+
+    public void addTreatment(Treatment treatment){
+        treatments.add(treatment);
+        treatment.setSpecialist(this);
+    }
+
+    public Set<Expertise> getExpertiseAreas() { return Set.copyOf(expertiseAreas); }
+
 }

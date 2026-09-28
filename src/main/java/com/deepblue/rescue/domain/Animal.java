@@ -1,9 +1,22 @@
 package com.deepblue.rescue.domain;
 
-import jakarta.persistence.*;
-import java.math.BigDecimal;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
+
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Entity
 @Table(name = "animals")
@@ -36,83 +49,38 @@ public class Animal {
     @OneToMany(mappedBy = "animal")
     private List<Treatment> treatments = new ArrayList<>();
 
-    @Column(name = "tracking_device_code", length = 50, unique = true)
-    private String trackingDeviceCode;
-
-    public Long getId() {
-        return id;
+    protected Animal(){
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getAnimalCode() {
-        return animalCode;
-    }
-
-    public void setAnimalCode(String animalCode) {
+    public Animal(String animalCode, String commonName, String scientificName, AnimalSex sex, RescueCase rescueCase){
         this.animalCode = animalCode;
-    }
-
-    public String getCommonName() {
-        return commonName;
-    }
-
-    public void setCommonName(String commonName) {
         this.commonName = commonName;
-    }
-
-    public String getScientificName() {
-        return scientificName;
-    }
-
-    public void setScientificName(String scientificName) {
         this.scientificName = scientificName;
-    }
-
-    public AnimalSex getSex() {
-        return sex;
-    }
-
-    public void setSex(AnimalSex sex) {
         this.sex = sex;
+        this.rescueCase = rescueCase;
     }
 
-    public RescueCase getRescueCase() {
-        return rescueCase;
+    public Long getId() { return id; }
+    public String getAnimalCode() { return animalCode; }
+    public String getCommonName() { return commonName; }
+    public String getScientificName() { return scientificName; }
+    public AnimalSex getSex() { return sex; }
+    public RescueCase getRescueCase() { return rescueCase; }
+    public MedicalRecord getMedicalRecord() { return medicalRecord; }
+    public List<Treatment> getTreatments() { return List.copyOf(treatments); }
+
+    public void assignMedicalRecord(MedicalRecord medicalRecord) {
+        this.medicalRecord = medicalRecord;
+        medicalRecord.setAnimal(this);
     }
 
     public void setRescueCase(RescueCase rescueCase) {
         this.rescueCase = rescueCase;
     }
 
-    public MedicalRecord getMedicalRecord() {
-        return medicalRecord;
+    public void addTreatment(Treatment treatment) {
+        treatments.add(treatment);
+        treatment.setAnimal(this);
     }
 
-    public void setMedicalRecord(MedicalRecord medicalRecord) {
-        this.medicalRecord = medicalRecord;
-    }
-
-    public List<Treatment> getTreatments() {
-        return treatments;
-    }
-
-    public void setTreatments(List<Treatment> treatments) {
-        this.treatments = treatments;
-    }
-
-    public String getTrackingDeviceCode() {
-        return trackingDeviceCode;
-    }
-
-    public void setTrackingDeviceCode(String trackingDeviceCode) {
-        this.trackingDeviceCode = trackingDeviceCode;
-    }
-
-    public void assignMedicalRecord(MedicalRecord medicalRecord) {
-        this.medicalRecord = medicalRecord;
-        medicalRecord.setAnimal(this);
-    }
 }

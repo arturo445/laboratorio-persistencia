@@ -1,6 +1,7 @@
 package com.deepblue.rescue.domain;
 
 import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -27,51 +28,24 @@ public class MedicalRecord {
     @Column(columnDefinition = "TEXT")
     private String observations;
 
-    public Long getId() {
-        return id;
+    protected MedicalRecord() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public MedicalRecord(BigDecimal initialWeight, String initialCondition, String injuries, String observations) {
+        this.initialWeight = initialWeight;
+        this.initialCondition = initialCondition;
+        this.injuries = injuries;
+        this.observations = observations;
     }
 
-    public Animal getAnimal() {
-        return animal;
-    }
+    public Long getId() { return id; }
+    public Animal getAnimal() { return animal; }
+    public BigDecimal getInitialWeight() { return initialWeight; }
+    public String getInitialCondition() { return initialCondition; }
+    public String getInjuries() { return injuries; }
+    public String getObservations() { return observations; }
 
     public void setAnimal(Animal animal) {
         this.animal = animal;
-    }
-
-    public BigDecimal getInitialWeight() {
-        return initialWeight;
-    }
-
-    public void setInitialWeight(BigDecimal initialWeight) {
-        this.initialWeight = initialWeight;
-    }
-
-    public String getInitialCondition() {
-        return initialCondition;
-    }
-
-    public void setInitialCondition(String initialCondition) {
-        this.initialCondition = initialCondition;
-    }
-
-    public String getInjuries() {
-        return injuries;
-    }
-
-    public void setInjuries(String injuries) {
-        this.injuries = injuries;
-    }
-
-    public String getObservations() {
-        return observations;
-    }
-
-    public void setObservations(String observations) {
-        this.observations = observations;
     }
 }
