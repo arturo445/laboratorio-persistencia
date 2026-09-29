@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SpecialistRepository extends JpaRepository<Specialist, Long> {
     @Query("""
@@ -16,4 +17,6 @@ public interface SpecialistRepository extends JpaRepository<Specialist, Long> {
         order by s.lastName, s.firstName
     """)
     List<Specialist> findActiveByExpertiseIgnoreCase(String expertiseName);
+
+    Optional<Specialist> findByProfessionalCode(String professionalCode);
 }
