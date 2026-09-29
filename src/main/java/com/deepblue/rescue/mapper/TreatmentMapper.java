@@ -14,7 +14,7 @@ public interface TreatmentMapper {
     )
     @Mapping(
             target = "specialistCode",
-            source = "specialist.profssionalCode"
+            source = "specialist.professionalCode"
     )
     TreatmentResponse toResponse(Treatment treatment);
 }

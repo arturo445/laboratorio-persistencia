@@ -102,11 +102,11 @@ class PersistenceIntegrationTest {
         rescueCenterRepository.save(center);
 
         RescueCase case1 = rescueCaseRepository.saveAndFlush(new RescueCase
-                ("RES-2026-001", LocalDate.of(2026, 8, 1),"Bahía Concha", center, RescueStatus.IN_REHABILITATION));
+                ("RES-2026-001", LocalDateTime.of(2026, 8, 1,0,0),"Bahía Concha", center, RescueStatus.IN_REHABILITATION));
         rescueCaseRepository.save(case1);
 
         RescueCase case2 = rescueCaseRepository.saveAndFlush(new RescueCase
-                ("RES-2026-002", LocalDate.of(2026, 8, 5),"Rodadero", center, RescueStatus.ADMITTED));
+                ("RES-2026-002", LocalDateTime.of(2026, 8, 5, 0, 0),"Rodadero", center, RescueStatus.ADMITTED));
         rescueCaseRepository.save(case1);
 
         RescueCase foundCase1 = rescueCaseRepository.findById(case1.getId()).orElseThrow();
@@ -128,7 +128,7 @@ class PersistenceIntegrationTest {
         rescueCenterRepository.save(center);
 
         RescueCase rescueCase = rescueCaseRepository.saveAndFlush(new RescueCase
-                ("RES-2026-001", LocalDate.of(2026, 8, 1),"Bahía Concha", center, RescueStatus.IN_REHABILITATION));
+                ("RES-2026-001", LocalDateTime.of(2026, 8, 1, 11, 0),"Bahía Concha", center, RescueStatus.IN_REHABILITATION));
         rescueCaseRepository.save(rescueCase);
 
         Animal animal = animalRepository.saveAndFlush(new Animal(
@@ -159,7 +159,7 @@ class PersistenceIntegrationTest {
     void shouldPersistMedicalRecordByCascade() {
         RescueCenter center = rescueCenterRepository.save(new RescueCenter("DB-CAR", "DeepBlue Caribbean", "Santa Marta"));
 
-        RescueCase rescueCase = rescueCaseRepository.save(new RescueCase("RES-2026-001", LocalDate.of(2026, 8, 1), "Bahía Concha", center, RescueStatus.IN_REHABILITATION));
+        RescueCase rescueCase = rescueCaseRepository.save(new RescueCase("RES-2026-001", LocalDateTime.of(2026, 8, 1, 0, 0), "Bahía Concha", center, RescueStatus.IN_REHABILITATION));
 
         Animal animal = animalRepository.save(new Animal("AN-2026-002", "Leatherback Turtle", "Dermochelys coriacea", AnimalSex.MALE, rescueCase));
 
@@ -381,7 +381,7 @@ class PersistenceIntegrationTest {
         RescueCenter center = createCenter("DB-CAR", "Caribbean");
 
         // Caso
-        RescueCase rescueCase = new RescueCase("RES-2026-100", LocalDate.of(2026, 8, 18), "Bahía Concha", center, RescueStatus.IN_REHABILITATION);
+        RescueCase rescueCase = new RescueCase("RES-2026-100", LocalDateTime.of(2026, 8, 18, 0, 0), "Bahía Concha", center, RescueStatus.IN_REHABILITATION);
         rescueCaseRepository.save(rescueCase);
 
         // Animal
@@ -551,7 +551,7 @@ class PersistenceIntegrationTest {
         Animal animal1 = createAnimalWithCase(center, "AN-REHAB", "Green Turtle", "RES-REHAB");
 
         // Caso cerrado (no debería aparecer)
-        RescueCase closedCase = new RescueCase("RES-CLOSED", LocalDate.of(2026, 8, 1), "Closed Location", center, RescueStatus.CLOSED);
+        RescueCase closedCase = new RescueCase("RES-CLOSED", LocalDateTime.of(2026, 8, 1, 0, 0), "Closed Location", center, RescueStatus.CLOSED);
         rescueCaseRepository.save(closedCase);
         Animal animal2 = animalRepository.save(new Animal("AN-CLOSED", "Loggerhead Turtle", "Scientific name", AnimalSex.MALE, closedCase));
 
@@ -590,7 +590,7 @@ class PersistenceIntegrationTest {
     }
 
     private RescueCase createCase(RescueCenter center, String code, RescueStatus status) {
-        RescueCase rescueCase = new RescueCase(code, LocalDate.of(2026, 8, 1), "Location", center, status);
+        RescueCase rescueCase = new RescueCase(code, LocalDateTime.of(2026, 8, 1, 0, 0), "Location", center, status);
         return rescueCaseRepository.save(rescueCase);
     }
 

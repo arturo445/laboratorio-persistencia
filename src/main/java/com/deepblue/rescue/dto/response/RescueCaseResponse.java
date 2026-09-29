@@ -2,14 +2,14 @@ package com.deepblue.rescue.dto.response;
 
 import com.deepblue.rescue.domain.RescueStatus;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record RescueCaseResponse(
         Long id,
 
         String caseCode,
 
-        LocalDate rescueDate,
+        LocalDateTime rescueDate,
 
         String rescueLocation,
 
