@@ -17,6 +17,11 @@ import com.deepblue.rescue.service.TreatmentService;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
 public class TreatmentServiceImpl implements TreatmentService {
 
     private final AnimalRepository animalRepository;
@@ -43,6 +48,8 @@ public class TreatmentServiceImpl implements TreatmentService {
                 .toList();
     }
 
+    @Override
+    @Transactional
     public TreatmentResponse register (CreateTreatmentRequest request){
         Animal animal = animalRepository.findByAnimalCode(request.animalCode()).orElseThrow(() -> new ResourceNotFoundException("Animal code not found: " + request.animalCode()));
 

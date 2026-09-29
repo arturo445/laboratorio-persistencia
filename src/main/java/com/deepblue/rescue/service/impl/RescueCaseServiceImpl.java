@@ -9,7 +9,6 @@ import com.deepblue.rescue.exception.ResourceNotFoundException;
 import com.deepblue.rescue.mapper.RescueCaseMapper;
 import com.deepblue.rescue.repository.RescueCaseRepository;
 import com.deepblue.rescue.service.RescueCaseService;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +23,7 @@ public class RescueCaseServiceImpl implements RescueCaseService {
 
     private final RescueCaseMapper mapper;
 
-    public RescueCaseServiceImpl(RescueCaseRepository repository, RescueCaseMapper mapper, MessageSource messageSource){
+    public RescueCaseServiceImpl(RescueCaseRepository repository, RescueCaseMapper mapper){
         this.repository = repository;
         this.mapper = mapper;
     }
