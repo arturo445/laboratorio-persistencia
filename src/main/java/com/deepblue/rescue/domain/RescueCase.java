@@ -15,6 +15,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.GenerationType;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "rescue_cases")
@@ -27,7 +28,7 @@ public class RescueCase {
     private String caseCode;
 
     @Column (name = "rescue_date", nullable = false)
-    private LocalDate rescueDate;
+    private LocalDateTime rescueDate;
 
     @Column (name = "rescue_location",nullable = false, length = 200)
     private String rescueLocation;
@@ -51,7 +52,7 @@ public class RescueCase {
     protected RescueCase(){
     }
 
-    public RescueCase (String caseCode, LocalDate rescueDate, String rescueLocation, RescueCenter rescueCenter, RescueStatus status){
+    public RescueCase (String caseCode, LocalDateTime rescueDate, String rescueLocation, RescueCenter rescueCenter, RescueStatus status){
         this.caseCode = caseCode;
         this.rescueDate = rescueDate;
         this.rescueLocation = rescueLocation;
@@ -61,7 +62,7 @@ public class RescueCase {
 
     public Long getId() { return id; }
     public String getCaseCode() { return caseCode; }
-    public LocalDate getRescueDate() { return rescueDate; }
+    public LocalDateTime getRescueDate() { return rescueDate; }
     public String getRescueLocation() { return rescueLocation; }
     public RescueStatus getStatus() { return status; }
     public RescueCenter getRescueCenter() { return rescueCenter; }
