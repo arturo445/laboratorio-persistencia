@@ -1,7 +1,6 @@
-package com.deepblue.rescue.service;
+package com.deepblue.rescue.service.impl;
 
 import com.deepblue.rescue.domain.RescueCase;
-import com.deepblue.rescue.domain.RescueCenter;
 import com.deepblue.rescue.domain.RescueStatus;
 import com.deepblue.rescue.dto.request.ChangeRescueStatusRequest;
 import com.deepblue.rescue.dto.response.RescueCaseResponse;
@@ -9,16 +8,13 @@ import com.deepblue.rescue.exception.BusinessRuleException;
 import com.deepblue.rescue.exception.ResourceNotFoundException;
 import com.deepblue.rescue.mapper.RescueCaseMapper;
 import com.deepblue.rescue.repository.RescueCaseRepository;
-import com.deepblue.rescue.service.impl.RescueCaseServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
