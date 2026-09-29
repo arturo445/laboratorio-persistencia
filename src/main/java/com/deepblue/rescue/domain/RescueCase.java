@@ -75,5 +75,9 @@ public class RescueCase {
         this.animal = animal;
         animal.setRescueCase(this);
     }
+
+    public void changeStatus(RescueStatus newStatus){
+        this.status = newStatus;
+    }
 }
 
