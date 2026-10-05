@@ -69,30 +69,24 @@ public class RescueCaseServiceImpl implements RescueCaseService {
     @Transactional
     public RescueCaseResponse changeStatus(String caseCode, ChangeRescueStatusRequest request){
 
-        // TODO 1 y 2
         // Buscar el RescueCase. Si no existe: ResourceNotFoundException
         RescueCase rescueCase = repository.findByCaseCode(caseCode).orElseThrow(() -> new ResourceNotFoundException("Case code doesn't exist"));
 
-        // TODO 3
         // Obtener currentStatus.
         RescueStatus currentStatus = rescueCase.getStatus();
         RescueStatus newStatus = request.status();
 
-        // TODO 4 y 5
         // Validar transición. Si no es válida: BusinessRuleException
         if(!isValidTransition(currentStatus, newStatus)){
             throw new BusinessRuleException("Invalid status transition from " + currentStatus + " to " + newStatus);
         }
 
-        // TODO 6
         // Cambiar status.
         rescueCase.changeStatus(newStatus);
 
-        // TODO 7
         // Guardar.
         RescueCase saved = repository.save(rescueCase);
 
-        // TODO 8
         // Transformar a Response.
         return mapper.toResponse(saved);
     }

@@ -1,4 +1,4 @@
-package com.deepblue.rescue.service.impl;
+package com.deepblue.rescue.service;
 
 import com.deepblue.rescue.domain.RescueCase;
 import com.deepblue.rescue.domain.RescueStatus;
@@ -8,6 +8,7 @@ import com.deepblue.rescue.exception.BusinessRuleException;
 import com.deepblue.rescue.exception.ResourceNotFoundException;
 import com.deepblue.rescue.mapper.RescueCaseMapper;
 import com.deepblue.rescue.repository.RescueCaseRepository;
+import com.deepblue.rescue.service.impl.RescueCaseServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
