@@ -1,4 +1,4 @@
-package com.deepblue.rescue.service.impl;
+package com.deepblue.rescue.service;
 
 import com.deepblue.rescue.domain.Animal;
 import com.deepblue.rescue.domain.AnimalSex;
@@ -9,6 +9,7 @@ import com.deepblue.rescue.dto.response.AnimalResponse;
 import com.deepblue.rescue.exception.ResourceNotFoundException;
 import com.deepblue.rescue.mapper.AnimalMapper;
 import com.deepblue.rescue.repository.AnimalRepository;
+import com.deepblue.rescue.service.impl.AnimalServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
