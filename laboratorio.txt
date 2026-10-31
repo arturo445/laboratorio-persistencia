@@ -1,2 +1,0 @@
-codigo del laboratorio:
-https://github.com/arturo445/laboratorio-persistencia.git

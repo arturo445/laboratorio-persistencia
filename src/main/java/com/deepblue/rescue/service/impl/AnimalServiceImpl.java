@@ -45,6 +45,7 @@ public class AnimalServiceImpl implements AnimalService {
                 .orElseThrow(() -> new ResourceNotFoundException("Animal not found: " + animalCode));
 
         RescueStatus status = animal.getRescueCase().getStatus();
-        return status == RescueStatus.UNDER_EVALUATION || status == RescueStatus.IN_REHABILITATION;
+        // Same rule as TreatmentServiceImpl.register: only RELEASED/CLOSED animals cannot be treated.
+        return status != RescueStatus.RELEASED && status != RescueStatus.CLOSED;
     }
 }
