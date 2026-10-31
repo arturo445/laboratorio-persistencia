@@ -13,6 +13,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Version;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,6 +33,12 @@ public class RescueCase {
 
     @Column (name = "rescue_location",nullable = false, length = 200)
     private String rescueLocation;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private Long version = 0L;
+
+    public Long getVersion() { return version; }
 
     @Enumerated(EnumType.STRING)
     @Column (nullable = false, length = 30)
